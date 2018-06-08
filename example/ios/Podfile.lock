@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - phone_log (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Pods/.symlinks/flutter/ios`)
+  - phone_log (from `Pods/.symlinks/plugins/phone_log/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Pods/.symlinks/flutter/ios
+  phone_log:
+    :path: Pods/.symlinks/plugins/phone_log/ios
+
+SPEC CHECKSUMS:
+  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  phone_log: 75370a47beb676bd78857ae589a6dcf6f1c3434e
+
+PODFILE CHECKSUM: 13dcf421f4da2e937a57e8ba760ed880beae536f
+
+COCOAPODS: 1.5.2
