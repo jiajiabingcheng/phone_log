@@ -24,13 +24,14 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  * PhoneLogPlugin
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
+public class PhoneLogPlugin implements MethodCallHandler,
+        PluginRegistry.RequestPermissionsResultListener {
+    private final Registrar registrar;
+    private Result pendingResult;
+
     PhoneLogPlugin(Registrar registrar) {
         this.registrar = registrar;
     }
-
-    private Result pendingResult;
-    private Registrar registrar;
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel =
@@ -77,7 +78,9 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
     }
 
     @Override
-    public boolean onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
+    public boolean onRequestPermissionsResult(int requestCode,
+                                              String[] strings,
+                                              int[] grantResults) {
         boolean res = false;
         if (requestCode == 0 && grantResults.length > 0) {
             res = grantResults[0] == PackageManager.PERMISSION_GRANTED;
@@ -87,13 +90,11 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
     }
 
     private static final String[] PROJECTION =
-            {
-                    CallLog.Calls.CACHED_FORMATTED_NUMBER,
+            {CallLog.Calls.CACHED_FORMATTED_NUMBER,
                     CallLog.Calls.CACHED_MATCHED_NUMBER,
                     CallLog.Calls.TYPE,
                     CallLog.Calls.DATE,
-                    CallLog.Calls.DURATION,
-            };
+                    CallLog.Calls.DURATION,};
 
     @TargetApi(Build.VERSION_CODES.M)
     private void fetchCallRecords(String startDate, String duration) {
@@ -111,7 +112,8 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
                     selectionCondition = durationSelection;
                 }
             }
-            Cursor cursor = registrar.context().getContentResolver().query(CallLog.Calls.CONTENT_URI, PROJECTION,
+            Cursor cursor = registrar.context().getContentResolver().query(
+                    CallLog.Calls.CONTENT_URI, PROJECTION,
                     selectionCondition,
                     null, CallLog.Calls.DATE + " DESC");
 
