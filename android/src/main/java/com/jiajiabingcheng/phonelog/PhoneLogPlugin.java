@@ -1,10 +1,8 @@
 package com.jiajiabingcheng.phonelog;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.annotation.TargetApi;
-import android.content.ContentResolver;
 import android.database.Cursor;
 import android.os.Build;
 import android.provider.CallLog;
@@ -83,7 +81,6 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
         boolean res = false;
         if (requestCode == 0 && grantResults.length > 0) {
             res = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-            Log.i("PhoneLogPlugin", "Requesting permission result : " + res);
             pendingResult.success(res);
         }
         return res;
@@ -122,7 +119,8 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
                 ArrayList<HashMap<String, Object>> records = getCallRecordMaps(cursor);
                 pendingResult.success(records);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("PhoneLog", "Error on fetching call record" + e);
+                pendingResult.error("PhoneLog", e.getMessage(), null);
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -160,7 +158,6 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
             record.duration = cursor.getLong(4);
 
             records.add(record.toMap());
-            Log.i("PhoneLogPlugin", record.toString());
         }
         return records;
     }
