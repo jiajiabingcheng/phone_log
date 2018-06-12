@@ -24,7 +24,7 @@ import 'package:phone_log/phone_log.dart';
 /// Check phone log permission and return a [Future] with the result
 static Future<bool> checkPermission(Permission permission);
 
-/// Request a [permission] and return a [Future] with the result
+/// Request phone log permission and return a [Future] with the result
 static Future<bool> requestPermission(Permission permission);
 
 /// Fetch the call log from Android device with a [startDate] and a 
