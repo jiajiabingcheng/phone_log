@@ -27,20 +27,17 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
-    PhoneLogPlugin(Activity activity, ContentResolver contentResolver) {
-        this.activity = activity;
-        this.contentResolver = contentResolver;
+    PhoneLogPlugin(Registrar registrar) {
+        this.registrar = registrar;
     }
 
     private Result pendingResult;
-    private final Activity activity;
-    private final ContentResolver contentResolver;
+    private Registrar registrar;
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel =
                 new MethodChannel(registrar.messenger(), "github.com/jiajiabingcheng/phone_log");
-        PhoneLogPlugin phoneLogPlugin =
-                new PhoneLogPlugin(registrar.activity(), registrar.context().getContentResolver());
+        PhoneLogPlugin phoneLogPlugin = new PhoneLogPlugin(registrar);
         channel.setMethodCallHandler(phoneLogPlugin);
         registrar.addRequestPermissionsResultListener(phoneLogPlugin);
     }
@@ -71,14 +68,14 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
         Log.i("PhoneLogPlugin",
                 "Requesting permission : " + Manifest.permission.READ_CALL_LOG);
         String[] perm = {Manifest.permission.READ_CALL_LOG};
-        activity.requestPermissions(perm, 0);
+        registrar.activity().requestPermissions(perm, 0);
     }
 
     private boolean checkPermission() {
         Log.i("PhoneLogPlugin", "Checking permission : " +
                 Manifest.permission.READ_CALL_LOG);
         return PackageManager.PERMISSION_GRANTED ==
-                activity.checkSelfPermission(Manifest.permission.READ_CALL_LOG);
+                registrar.activity().checkSelfPermission(Manifest.permission.READ_CALL_LOG);
     }
 
     @Override
@@ -103,7 +100,7 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
 
     @TargetApi(Build.VERSION_CODES.M)
     private void fetchCallRecords(String startDate, String duration) {
-        if (activity.checkSelfPermission(Manifest.permission.READ_CALL_LOG)
+        if (registrar.activity().checkSelfPermission(Manifest.permission.READ_CALL_LOG)
                 == PackageManager.PERMISSION_GRANTED) {
             String selectionCondition = null;
             if (startDate != null) {
@@ -117,7 +114,7 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
                     selectionCondition = durationSelection;
                 }
             }
-            Cursor cursor = contentResolver.query(CallLog.Calls.CONTENT_URI, PROJECTION,
+            Cursor cursor = registrar.context().getContentResolver().query(CallLog.Calls.CONTENT_URI, PROJECTION,
                     selectionCondition,
                     null, CallLog.Calls.DATE + " DESC");
 
