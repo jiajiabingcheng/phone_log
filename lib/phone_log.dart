@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/services.dart';
 
 class PhoneLog {
-  static const MethodChannel _channel = const MethodChannel('github.com/jiajiabingcheng/phone_log');
+  static const MethodChannel _channel = const MethodChannel(
+      'github.com/jiajiabingcheng/phone_log');
 
   /// Check a [permission] and return a [Future] with the result
   static Future<bool> checkPermission() async {
@@ -21,10 +23,17 @@ class PhoneLog {
 
   /**
    * Fetches phone logs
+   *
+   * The unit of [startDate] is the Milliseconds of date.
+   * The unit of [duration] is second.
    */
-  static Future<Iterable<CallRecord>> getPhoneLogs() async{
-    Iterable records = await _channel.invokeMethod('getPhoneLogs', null);
-    return records.map((m) => new CallRecord.fromMap(m));
+  static Future<Iterable<CallRecord>> getPhoneLogs(
+      {Int64 startDate, Int64 duration}) async {
+    var _startDate = startDate?.toString();
+    var _duration = duration?.toString();
+    Iterable records = await _channel.invokeMethod('getPhoneLogs',
+        {"startDate": _startDate, "duration": _duration});
+    return records?.map((m) => new CallRecord.fromMap(m));
   }
 }
 
