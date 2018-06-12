@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/services.dart';
 
+/// Provide 3 methods to access and fetch the phone log.
 class PhoneLog {
   static const MethodChannel _channel = const MethodChannel(
       'github.com/jiajiabingcheng/phone_log');
@@ -21,12 +22,10 @@ class PhoneLog {
     return isGranted;
   }
 
-  /**
-   * Fetches phone logs
-   *
-   * The unit of [startDate] is the Milliseconds of date.
-   * The unit of [duration] is second.
-   */
+  ///Fetches phone logs
+  ///
+  ///The unit of [startDate] is the Milliseconds of date.
+  ///The unit of [duration] is second.
   static Future<Iterable<CallRecord>> getPhoneLogs(
       {Int64 startDate, Int64 duration}) async {
     var _startDate = startDate?.toString();
@@ -37,6 +36,7 @@ class PhoneLog {
   }
 }
 
+/// The class that carries all the data for one call history entry.
 class CallRecord {
 
   CallRecord({
