@@ -43,19 +43,22 @@ public class PhoneLogPlugin implements MethodCallHandler,
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
+        if (pendingResult != null){
+            pendingResult.error("multiple_requests", "Cancelled by a second request.", null);
+            pendingResult = null;
+        }
+        pendingResult = result;
         String startDate, duration;
         switch (call.method) {
             case "checkPermission":
-                result.success(checkPermission());
+                pendingResult.success(checkPermission());
                 break;
             case "requestPermission":
-                this.pendingResult = result;
                 requestPermission();
                 break;
             case "getPhoneLogs":
                 startDate = call.argument("startDate");
                 duration = call.argument("duration");
-                this.pendingResult = result;
                 fetchCallRecords(startDate, duration);
                 break;
             default:
