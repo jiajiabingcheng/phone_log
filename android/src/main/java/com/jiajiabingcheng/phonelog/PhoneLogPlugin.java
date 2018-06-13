@@ -48,18 +48,17 @@ public class PhoneLogPlugin
             pendingResult = null;
         }
         pendingResult = result;
-        String startDate;
-        String duration;
         switch (call.method) {
             case "checkPermission":
                 pendingResult.success(checkPermission());
+                pendingResult = null;
                 break;
             case "requestPermission":
                 requestPermission();
                 break;
             case "getPhoneLogs":
-                startDate = call.argument("startDate");
-                duration = call.argument("duration");
+                String startDate = call.argument("startDate");
+                String duration = call.argument("duration");
                 fetchCallRecords(startDate, duration);
                 break;
             default:
@@ -87,6 +86,7 @@ public class PhoneLogPlugin
         if (requestCode == 0 && grantResults.length > 0) {
             res = grantResults[0] == PackageManager.PERMISSION_GRANTED;
             pendingResult.success(res);
+            pendingResult = null;
         }
         return res;
     }
@@ -122,9 +122,11 @@ public class PhoneLogPlugin
             try {
                 ArrayList<HashMap<String, Object>> records = getCallRecordMaps(cursor);
                 pendingResult.success(records);
+                pendingResult = null;
             } catch (Exception e) {
                 Log.e("PhoneLog", "Error on fetching call record" + e);
                 pendingResult.error("PhoneLog", e.getMessage(), null);
+                pendingResult = null;
             } finally {
                 if (cursor != null) {
                     cursor.close();
