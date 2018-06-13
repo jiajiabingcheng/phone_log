@@ -20,15 +20,13 @@ void main() {
       });
 
       PhoneLog.setChannel(mockChannel);
-
     });
 
     test('fetch phone log', () async {
       await PhoneLog.getPhoneLogs(
           startDate: new Int64(123456789), duration: new Int64(12));
       expect(invokedMethod, 'getPhoneLogs');
-      expect(arguments,
-          {'startDate': '123456789', 'duration': '12'});
+      expect(arguments, {'startDate': '123456789', 'duration': '12'});
     });
 
     test('check permission', () async {

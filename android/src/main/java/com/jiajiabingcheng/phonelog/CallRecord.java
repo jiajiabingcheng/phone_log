@@ -4,11 +4,17 @@ import java.util.HashMap;
 
 class CallRecord {
 
-    CallRecord() {
-    }
+    CallRecord() {}
 
-    String formattedNumber, number, callType;
-    int dateYear, dateMonth, dateDay, dateHour, dateMinute, dateSecond;
+    String formattedNumber;
+    String number;
+    String callType;
+    int dateYear;
+    int dateMonth;
+    int dateDay;
+    int dateHour;
+    int dateMinute;
+    int dateSecond;
     long duration;
 
     HashMap<String, Object> toMap() {

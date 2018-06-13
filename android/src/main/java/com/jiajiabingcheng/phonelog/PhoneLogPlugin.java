@@ -1,35 +1,35 @@
 package com.jiajiabingcheng.phonelog;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
 import android.annotation.TargetApi;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.provider.CallLog;
 import android.util.Log;
+
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
+import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry;
+import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
-
 /**
  * PhoneLogPlugin
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class PhoneLogPlugin implements MethodCallHandler,
-        PluginRegistry.RequestPermissionsResultListener {
+public class PhoneLogPlugin
+        implements MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
     private final Registrar registrar;
     private Result pendingResult;
 
-    PhoneLogPlugin(Registrar registrar) {
+    private PhoneLogPlugin(Registrar registrar) {
         this.registrar = registrar;
     }
 
@@ -43,12 +43,13 @@ public class PhoneLogPlugin implements MethodCallHandler,
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-        if (pendingResult != null){
+        if (pendingResult != null) {
             pendingResult.error("multiple_requests", "Cancelled by a second request.", null);
             pendingResult = null;
         }
         pendingResult = result;
-        String startDate, duration;
+        String startDate;
+        String duration;
         switch (call.method) {
             case "checkPermission":
                 pendingResult.success(checkPermission());
@@ -67,17 +68,15 @@ public class PhoneLogPlugin implements MethodCallHandler,
     }
 
     private void requestPermission() {
-        Log.i("PhoneLogPlugin",
-                "Requesting permission : " + Manifest.permission.READ_CALL_LOG);
+        Log.i("PhoneLogPlugin", "Requesting permission : " + Manifest.permission.READ_CALL_LOG);
         String[] perm = {Manifest.permission.READ_CALL_LOG};
         registrar.activity().requestPermissions(perm, 0);
     }
 
     private boolean checkPermission() {
-        Log.i("PhoneLogPlugin", "Checking permission : " +
-                Manifest.permission.READ_CALL_LOG);
-        return PackageManager.PERMISSION_GRANTED ==
-                registrar.activity().checkSelfPermission(Manifest.permission.READ_CALL_LOG);
+        Log.i("PhoneLogPlugin", "Checking permission : " + Manifest.permission.READ_CALL_LOG);
+        return PackageManager.PERMISSION_GRANTED
+                == registrar.activity().checkSelfPermission(Manifest.permission.READ_CALL_LOG);
     }
 
     @Override
