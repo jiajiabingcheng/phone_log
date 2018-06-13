@@ -1,12 +1,17 @@
 import 'dart:async';
 
 import 'package:fixnum/fixnum.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-/// Provide 3 methods to access and fetch the phone log.
+/// Provide methods to access and fetch the phone log.
 class PhoneLog {
-  static const MethodChannel _channel = const MethodChannel(
+  static MethodChannel _channel = const MethodChannel(
       'github.com/jiajiabingcheng/phone_log');
+
+  @visibleForTesting
+  static setChannel(MethodChannel platformChannel) =>
+      _channel = platformChannel;
 
   /// Check a [permission] and return a [Future] with the result
   static Future<bool> checkPermission() async {
