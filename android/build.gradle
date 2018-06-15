@@ -1,4 +1,4 @@
-group 'com.example.phonelog'
+group 'com.jiajiabingcheng.phonelog'
 version '1.0-SNAPSHOT'
 
 buildscript {

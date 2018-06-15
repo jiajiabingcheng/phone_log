@@ -24,8 +24,8 @@ import java.util.HashMap;
  * PhoneLogPlugin
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class PhoneLogPlugin
-        implements MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
+public class PhoneLogPlugin implements MethodCallHandler,
+        PluginRegistry.RequestPermissionsResultListener {
     private final Registrar registrar;
     private Result pendingResult;
 
@@ -133,6 +133,9 @@ public class PhoneLogPlugin
                 }
             }
 
+        } else {
+            pendingResult.error("PhoneLog", "Permission is not granted", null);
+            pendingResult = null;
         }
     }
 

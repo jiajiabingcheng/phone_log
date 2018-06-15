@@ -15,7 +15,7 @@ dependencies:
 # The following section is specific to Flutter.
 flutter:
   plugin:
-    androidPackage: com.example.phonelog
+    androidPackage: com.jiajiabingcheng.phonelog
     pluginClass: PhoneLogPlugin
 
 dev_dependencies:
