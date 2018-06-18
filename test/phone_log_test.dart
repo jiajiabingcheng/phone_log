@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/services.dart';
 import 'package:mockito/mockito.dart';
@@ -6,23 +8,55 @@ import 'package:test/test.dart';
 import 'package:phone_log/phone_log.dart';
 
 void main() {
-  group('Phone log plugin', () {
-    String invokedMethod;
-    dynamic arguments;
+  String invokedMethod;
+  dynamic arguments;
+  MockPlatformChannel mockChannel;
+  MockPlatformChannel mockChannelForGetLogs;
 
-    setUp(() {
-      final MockPlatformChannel mockChannel = new MockPlatformChannel();
+  setUp(() {
+    mockChannel = new MockPlatformChannel();
+    mockChannelForGetLogs = new MockPlatformChannel();
 
-      when(mockChannel.invokeMethod(typed(any), any))
-          .thenAnswer((Invocation invocation) {
-        invokedMethod = invocation.positionalArguments[0];
-        arguments = invocation.positionalArguments[1];
-      });
-
-      PhoneLog.setChannel(mockChannel);
+    when(mockChannel.invokeMethod(typed(any), any))
+        .thenAnswer((Invocation invocation) {
+      invokedMethod = invocation.positionalArguments[0];
+      arguments = invocation.positionalArguments[1];
     });
 
+    when(mockChannelForGetLogs.invokeMethod('getPhoneLogs', any))
+        .thenReturn(new Future(() => [
+              {
+                'formattedNumber': '123 123 1234',
+                'number': '1231231234',
+                'callType': 'INCOMING_TYPE',
+                'dateYear': 2018,
+                'dateMonth': 6,
+                'dateDay': 15,
+                'dateHour': 3,
+                'dateMinute': 16,
+                'dateSecond': 23,
+                'duration': 123
+              }
+            ]));
+  });
+
+  group('Phone log plugin', () {
     test('fetch phone log', () async {
+      PhoneLog.setChannel(mockChannelForGetLogs);
+
+      var records = await PhoneLog.getPhoneLogs(
+          startDate: new Int64(123456789), duration: new Int64(12));
+
+      print(records);
+      var record = records.first;
+
+      expect(record.formattedNumber, '123 123 1234');
+      expect(record.callType, 'INCOMING_TYPE');
+      expect(record.number, '1231231234');
+      expect(record.dateYear, 2018);
+      expect(record.duration, 123);
+
+      PhoneLog.setChannel(mockChannel);
       await PhoneLog.getPhoneLogs(
           startDate: new Int64(123456789), duration: new Int64(12));
       expect(invokedMethod, 'getPhoneLogs');
@@ -30,13 +64,19 @@ void main() {
     });
 
     test('check permission', () async {
+      PhoneLog.setChannel(mockChannel);
+
       await PhoneLog.checkPermission();
+
       expect(invokedMethod, 'checkPermission');
       expect(arguments, null);
     });
 
     test('request permission', () async {
+      PhoneLog.setChannel(mockChannel);
+
       await PhoneLog.requestPermission();
+
       expect(invokedMethod, 'requestPermission');
       expect(arguments, null);
     });
