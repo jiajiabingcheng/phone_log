@@ -26,7 +26,7 @@ Import the relevant file:
 import 'package:phone_log/phone_log.dart';
 ```
 
-### Methords
+### Methods
 ```dart
 /// Check phone log permission and return a [Future] with the result
 static Future<bool> checkPermission(Permission permission);
@@ -34,9 +34,8 @@ static Future<bool> checkPermission(Permission permission);
 /// Request phone log permission and return a [Future] with the result
 static Future<bool> requestPermission(Permission permission);
 
-/// Fetch the call log from Android device with a [startDate] and a 
+/// Fetch the call log from Android device with a [startDate] and a
 /// minimum [duration]. If startDate == null, all the data will be
 /// fetched out. If duration == null, there will be no duration limit.
 static Future<Iterable<CallRecord>> getPhoneLogs();
 ```
-
