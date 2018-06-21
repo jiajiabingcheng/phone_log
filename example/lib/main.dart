@@ -13,15 +13,27 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Iterable<CallRecord> _callRecords;
+  var phoneLog = new PhoneLog();
 
   Future<Null> fetchCallLogs() async {
-    var callLogs = await PhoneLog.getPhoneLogs(
+    var callLogs = await phoneLog.getPhoneLogs(
         // startDate: 20180605, duration: 15 seconds
         startDate: new Int64(1525590000000),
         duration: new Int64(13));
     setState(() {
       _callRecords = callLogs;
     });
+  }
+
+
+  requestPermission() async {
+    bool res = await phoneLog.requestPermission();
+    print("permission request result is " + res.toString());
+  }
+
+  checkPermission() async {
+    bool res = await phoneLog.checkPermission();
+    print("permission is " + res.toString());
   }
 
   @override
@@ -95,12 +107,3 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-requestPermission() async {
-  bool res = await PhoneLog.requestPermission();
-  print("permission request result is " + res.toString());
-}
-
-checkPermission() async {
-  bool res = await PhoneLog.checkPermission();
-  print("permission is " + res.toString());
-}
