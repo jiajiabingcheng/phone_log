@@ -42,9 +42,9 @@ void main() {
 
   group('Phone log plugin', () {
     test('fetch phone log', () async {
-      PhoneLog.setChannel(mockChannelForGetLogs);
+      var phoneLog = new PhoneLog.private(mockChannelForGetLogs);
 
-      var records = await PhoneLog.getPhoneLogs(
+      var records = await phoneLog.getPhoneLogs(
           startDate: new Int64(123456789), duration: new Int64(12));
 
       print(records);
@@ -56,26 +56,26 @@ void main() {
       expect(record.dateYear, 2018);
       expect(record.duration, 123);
 
-      PhoneLog.setChannel(mockChannel);
-      await PhoneLog.getPhoneLogs(
+      var phoneLogMethod = new PhoneLog.private(mockChannel);
+      await phoneLogMethod.getPhoneLogs(
           startDate: new Int64(123456789), duration: new Int64(12));
       expect(invokedMethod, 'getPhoneLogs');
       expect(arguments, {'startDate': '123456789', 'duration': '12'});
     });
 
     test('check permission', () async {
-      PhoneLog.setChannel(mockChannel);
+      var phoneLog = new PhoneLog.private(mockChannel);
 
-      await PhoneLog.checkPermission();
+      await phoneLog.checkPermission();
 
       expect(invokedMethod, 'checkPermission');
       expect(arguments, null);
     });
 
     test('request permission', () async {
-      PhoneLog.setChannel(mockChannel);
+      var phoneLog = new PhoneLog.private(mockChannel);
 
-      await PhoneLog.requestPermission();
+      await phoneLog.requestPermission();
 
       expect(invokedMethod, 'requestPermission');
       expect(arguments, null);

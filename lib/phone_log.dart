@@ -6,21 +6,25 @@ import 'package:flutter/services.dart';
 
 /// Provide methods to access and fetch the phone log.
 class PhoneLog {
-  static MethodChannel _channel =
-      const MethodChannel('github.com/jiajiabingcheng/phone_log');
+  final MethodChannel _channel;
+
+  static final PhoneLog _instance = new PhoneLog.private(
+      const MethodChannel('github.com/jiajiabingcheng/phone_log'));
+
+  /// Provides an instance of this class.
+  factory PhoneLog() => _instance;
 
   @visibleForTesting
-  static setChannel(MethodChannel platformChannel) =>
-      _channel = platformChannel;
+  PhoneLog.private(MethodChannel platformChannel):_channel = platformChannel;
 
   /// Check a [permission] and return a [Future] with the result
-  static Future<bool> checkPermission() async {
+  Future<bool> checkPermission() async {
     final bool isGranted = await _channel.invokeMethod("checkPermission", null);
     return isGranted;
   }
 
   /// Request a [permission] and return a [Future] with the result
-  static Future<bool> requestPermission() async {
+  Future<bool> requestPermission() async {
     final bool isGranted =
         await _channel.invokeMethod("requestPermission", null);
     return isGranted;
@@ -30,7 +34,7 @@ class PhoneLog {
   ///
   ///The unit of [startDate] is the Milliseconds of date.
   ///The unit of [duration] is second.
-  static Future<Iterable<CallRecord>> getPhoneLogs(
+  Future<Iterable<CallRecord>> getPhoneLogs(
       {Int64 startDate, Int64 duration}) async {
     var _startDate = startDate?.toString();
     var _duration = duration?.toString();
