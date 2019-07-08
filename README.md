@@ -11,6 +11,8 @@ Currently only fetching the following 5 fields:
 
 For iOS it is not possible to extract the call log programmatically. Apple officially does not expose any public API to access the call log. So all the method will return null on iOS.
 
+**Warning:** SDK Version: This plugin needs minimum SDK of 21. getPhoneLogs() method needs minimum SDK of 23.
+
 ## Getting Started
 
 Make sure you add the permission below to your Android Manifest Permission:
