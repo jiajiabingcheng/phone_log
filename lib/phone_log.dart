@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +13,7 @@ class PhoneLog {
   factory PhoneLog() => _instance;
 
   @visibleForTesting
-  PhoneLog.private(MethodChannel platformChannel):_channel = platformChannel;
+  PhoneLog.private(MethodChannel platformChannel) : _channel = platformChannel;
 
   /// Check a [permission] and return a [Future] with the result
   Future<bool> checkPermission() async {
@@ -49,6 +47,7 @@ class CallRecord {
   CallRecord({
     this.formattedNumber,
     this.number,
+    this.name,
     this.callType,
     this.dateYear,
     this.dateMonth,
@@ -58,7 +57,7 @@ class CallRecord {
     this.duration,
   });
 
-  String formattedNumber, number, callType;
+  String formattedNumber, number, callType, name;
   int dateYear, dateMonth, dateDay, dateHour, dateMinute, dateSecond, duration;
 
   CallRecord.fromMap(Map m) {
@@ -72,5 +71,6 @@ class CallRecord {
     dateMinute = m['dateMinute'];
     dateSecond = m['dateSecond'];
     duration = m['duration'];
+    name = m['name'];
   }
 }
