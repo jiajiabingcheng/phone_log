@@ -143,10 +143,10 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
             String phNumber = cursor.getString(number);
             String callType = cursor.getString(type);
             String callDate = cursor.getString(date);
-            String name = cursor.getString(names);
             Date callDayTime = new Date(Long.valueOf(callDate));
             String callDuration = cursor.getString(duration);
 
+            record.name = cursor.getString(names);
             record.number = phNumber;
             record.callType = getCallType(Integer.parseInt(callType));
 
