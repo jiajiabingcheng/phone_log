@@ -56,10 +56,8 @@ public class PhoneLogPlugin implements MethodCallHandler,
             case "requestPermission":
                 requestPermission();
                 break;
-            case "getPhoneLogs":
-                String startDate = call.argument("startDate");
-                String duration = call.argument("duration");
-                fetchCallRecords(startDate, duration);
+            case "getPhoneLogs":                
+                fetchCallRecords();
                 break;
             default:
                 result.notImplemented();
@@ -99,25 +97,12 @@ public class PhoneLogPlugin implements MethodCallHandler,
                     CallLog.Calls.DURATION,};
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void fetchCallRecords(String startDate, String duration) {
+    private void fetchCallRecords() {
         if (registrar.activity().checkSelfPermission(Manifest.permission.READ_CALL_LOG)
                 == PackageManager.PERMISSION_GRANTED) {
-            String selectionCondition = null;
-            if (startDate != null) {
-                selectionCondition = CallLog.Calls.DATE + "> " + startDate;
-            }
-            if (duration != null) {
-                String durationSelection = CallLog.Calls.DURATION + "> " + duration;
-                if (selectionCondition != null) {
-                    selectionCondition = selectionCondition + " AND " + durationSelection;
-                } else {
-                    selectionCondition = durationSelection;
-                }
-            }
+            
             Cursor cursor = registrar.context().getContentResolver().query(
-                    CallLog.Calls.CONTENT_URI, PROJECTION,
-                    selectionCondition,
-                    null, CallLog.Calls.DATE + " DESC");
+                    CallLog.Calls.CONTENT_URI, null, null, null, null);
 
             try {
                 ArrayList<HashMap<String, Object>> records = getCallRecordMaps(cursor);
@@ -149,15 +134,25 @@ public class PhoneLogPlugin implements MethodCallHandler,
     private ArrayList<HashMap<String, Object>> getCallRecordMaps(Cursor cursor) {
         ArrayList<HashMap<String, Object>> records = new ArrayList<>();
 
+        int number = cursor.getColumnIndex( CallLog.Calls.NUMBER ); 
+        int type = cursor.getColumnIndex( CallLog.Calls.TYPE );
+        int date = cursor.getColumnIndex( CallLog.Calls.DATE);
+        int duration = cursor.getColumnIndex( CallLog.Calls.DURATION);
+
         while (cursor != null && cursor.moveToNext()) {
             CallRecord record = new CallRecord();
-            record.formattedNumber = cursor.getString(0);
-            record.number = cursor.getString(1);
-            record.callType = getCallType(cursor.getInt(2));
 
-            Date date = new Date(cursor.getLong(3));
+            String phNumber = cursor.getString( number );
+            String callType = cursor.getString( type );
+            String callDate = cursor.getString( date );
+            Date callDayTime = new Date(Long.valueOf(callDate));
+            String callDuration = cursor.getString( duration );
+            
+            record.number = phNumber;
+            record.callType = getCallType(Integer.parseInt( callType ));
+           
             Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
+            cal.setTime(callDayTime);
             record.dateYear = cal.get(Calendar.YEAR);
             record.dateMonth = cal.get(Calendar.MONTH);
             record.dateDay = cal.get(Calendar.DAY_OF_MONTH);
