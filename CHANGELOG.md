@@ -1,3 +1,6 @@
+## [0.0.3] - Sep. 8th, 2019
+Updated to Dart 2
+
 ## [0.0.2] - June 11th, 2018.
 Update README and several fixes.
 
