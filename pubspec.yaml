@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  fixnum: ^0.10.7
+  fixnum: ^0.10.9
 
 # The following section is specific to Flutter.
 flutter:
