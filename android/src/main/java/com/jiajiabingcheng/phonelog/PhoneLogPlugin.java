@@ -24,8 +24,7 @@ import java.util.HashMap;
  * PhoneLogPlugin
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class PhoneLogPlugin implements MethodCallHandler,
-        PluginRegistry.RequestPermissionsResultListener {
+public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
     private final Registrar registrar;
     private Result pendingResult;
 
@@ -34,8 +33,7 @@ public class PhoneLogPlugin implements MethodCallHandler,
     }
 
     public static void registerWith(Registrar registrar) {
-        final MethodChannel channel =
-                new MethodChannel(registrar.messenger(), "github.com/jiajiabingcheng/phone_log");
+        final MethodChannel channel = new MethodChannel(registrar.messenger(), "github.com/jiajiabingcheng/phone_log");
         PhoneLogPlugin phoneLogPlugin = new PhoneLogPlugin(registrar);
         channel.setMethodCallHandler(phoneLogPlugin);
         registrar.addRequestPermissionsResultListener(phoneLogPlugin);
@@ -56,7 +54,7 @@ public class PhoneLogPlugin implements MethodCallHandler,
             case "requestPermission":
                 requestPermission();
                 break;
-            case "getPhoneLogs":                
+            case "getPhoneLogs":
                 fetchCallRecords();
                 break;
             default:
@@ -72,14 +70,11 @@ public class PhoneLogPlugin implements MethodCallHandler,
 
     private boolean checkPermission() {
         Log.i("PhoneLogPlugin", "Checking permission : " + Manifest.permission.READ_CALL_LOG);
-        return PackageManager.PERMISSION_GRANTED
-                == registrar.activity().checkSelfPermission(Manifest.permission.READ_CALL_LOG);
+        return PackageManager.PERMISSION_GRANTED == registrar.activity().checkSelfPermission(Manifest.permission.READ_CALL_LOG);
     }
 
     @Override
-    public boolean onRequestPermissionsResult(int requestCode,
-                                              String[] strings,
-                                              int[] grantResults) {
+    public boolean onRequestPermissionsResult(int requestCode, String[] strings, int[] grantResults) {
         boolean res = false;
         if (requestCode == 0 && grantResults.length > 0) {
             res = grantResults[0] == PackageManager.PERMISSION_GRANTED;
@@ -90,17 +85,19 @@ public class PhoneLogPlugin implements MethodCallHandler,
     }
 
     private static final String[] PROJECTION =
-            {CallLog.Calls.CACHED_FORMATTED_NUMBER,
+            {
+                    CallLog.Calls.CACHED_FORMATTED_NUMBER,
                     CallLog.Calls.CACHED_MATCHED_NUMBER,
                     CallLog.Calls.TYPE,
                     CallLog.Calls.DATE,
-                    CallLog.Calls.DURATION,};
+                    CallLog.Calls.DURATION,
+                    CallLog.Calls.CACHED_NAME,
+            };
 
     @TargetApi(Build.VERSION_CODES.M)
     private void fetchCallRecords() {
-        if (registrar.activity().checkSelfPermission(Manifest.permission.READ_CALL_LOG)
-                == PackageManager.PERMISSION_GRANTED) {
-            
+        if (registrar.activity().checkSelfPermission(Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
+
             Cursor cursor = registrar.context().getContentResolver().query(
                     CallLog.Calls.CONTENT_URI, null, null, null, null);
 
@@ -134,23 +131,25 @@ public class PhoneLogPlugin implements MethodCallHandler,
     private ArrayList<HashMap<String, Object>> getCallRecordMaps(Cursor cursor) {
         ArrayList<HashMap<String, Object>> records = new ArrayList<>();
 
-        int number = cursor.getColumnIndex( CallLog.Calls.NUMBER ); 
-        int type = cursor.getColumnIndex( CallLog.Calls.TYPE );
-        int date = cursor.getColumnIndex( CallLog.Calls.DATE);
-        int duration = cursor.getColumnIndex( CallLog.Calls.DURATION);
+        int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+        int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
+        int date = cursor.getColumnIndex(CallLog.Calls.DATE);
+        int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
+        int names = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
 
         while (cursor != null && cursor.moveToNext()) {
             CallRecord record = new CallRecord();
 
-            String phNumber = cursor.getString( number );
-            String callType = cursor.getString( type );
-            String callDate = cursor.getString( date );
+            String phNumber = cursor.getString(number);
+            String callType = cursor.getString(type);
+            String callDate = cursor.getString(date);
+            String name = cursor.getString(names);
             Date callDayTime = new Date(Long.valueOf(callDate));
-            String callDuration = cursor.getString( duration );
-            
+            String callDuration = cursor.getString(duration);
+
             record.number = phNumber;
-            record.callType = getCallType(Integer.parseInt( callType ));
-           
+            record.callType = getCallType(Integer.parseInt(callType));
+
             Calendar cal = Calendar.getInstance();
             cal.setTime(callDayTime);
             record.dateYear = cal.get(Calendar.YEAR);

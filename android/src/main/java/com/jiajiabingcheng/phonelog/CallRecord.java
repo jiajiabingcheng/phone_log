@@ -9,6 +9,7 @@ class CallRecord {
     String formattedNumber;
     String number;
     String callType;
+    String name;
     int dateYear;
     int dateMonth;
     int dateDay;
@@ -22,6 +23,7 @@ class CallRecord {
         recordMap.put("formattedNumber", formattedNumber);
         recordMap.put("number", number);
         recordMap.put("callType", callType);
+        recordMap.put("name", name);
         recordMap.put("dateYear", dateYear);
         recordMap.put("dateMonth", dateMonth);
         recordMap.put("dateDay", dateDay);
