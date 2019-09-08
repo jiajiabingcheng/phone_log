@@ -19,6 +19,6 @@ flutter:
     pluginClass: PhoneLogPlugin
 
 dev_dependencies:
-  mockito: ^2.0.2
+  mockito: ^4.1.1
   flutter_test:
     sdk: flutter
