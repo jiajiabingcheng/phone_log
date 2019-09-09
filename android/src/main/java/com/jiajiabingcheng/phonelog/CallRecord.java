@@ -10,13 +10,9 @@ class CallRecord {
     String number;
     String callType;
     String name;
-    int dateYear;
-    int dateMonth;
-    int dateDay;
-    int dateHour;
-    int dateMinute;
-    int dateSecond;
+    long date;
     long duration;
+
 
     HashMap<String, Object> toMap() {
         HashMap<String, Object> recordMap = new HashMap<>();
@@ -24,12 +20,7 @@ class CallRecord {
         recordMap.put("number", number);
         recordMap.put("callType", callType);
         recordMap.put("name", name);
-        recordMap.put("dateYear", dateYear);
-        recordMap.put("dateMonth", dateMonth);
-        recordMap.put("dateDay", dateDay);
-        recordMap.put("dateHour", dateHour);
-        recordMap.put("dateMinute", dateMinute);
-        recordMap.put("dateSecond", dateSecond);
+        recordMap.put("date", date);
         recordMap.put("duration", duration);
 
         return recordMap;
