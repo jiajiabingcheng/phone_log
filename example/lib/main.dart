@@ -74,17 +74,7 @@ class _MyAppState extends State<MyApp> {
         new Row(
           children: <Widget>[
             new Padding(
-              child: new Text(call.dateYear.toString() +
-                  '-' +
-                  call.dateMonth.toString() +
-                  '-' +
-                  call.dateDay.toString() +
-                  '  ' +
-                  call.dateHour.toString() +
-                  ': ' +
-                  call.dateMinute.toString() +
-                  ': ' +
-                  call.dateSecond.toString()),
+              child: new Text(call.date.toString()),
               padding: const EdgeInsets.only(left: 8.0),
             ),
             new Padding(

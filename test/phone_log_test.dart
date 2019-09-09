@@ -53,7 +53,7 @@ void main() {
       expect(record.formattedNumber, '123 123 1234');
       expect(record.callType, 'INCOMING_TYPE');
       expect(record.number, '1231231234');
-      expect(record.dateYear, 2018);
+      expect(record.date.runtimeType, DateTime);
       expect(record.duration, 123);
 
       var phoneLogMethod = new PhoneLog.private(mockChannel);
