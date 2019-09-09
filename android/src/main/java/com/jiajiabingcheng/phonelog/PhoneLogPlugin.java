@@ -164,6 +164,5 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
             default:
                 return "UNKNOWN_TYPE";
         }
-        return null;
     }
 }
