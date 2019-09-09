@@ -84,16 +84,6 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
         return res;
     }
 
-    private static final String[] PROJECTION =
-            {
-                    CallLog.Calls.CACHED_FORMATTED_NUMBER,
-                    CallLog.Calls.CACHED_MATCHED_NUMBER,
-                    CallLog.Calls.TYPE,
-                    CallLog.Calls.DATE,
-                    CallLog.Calls.DURATION,
-                    CallLog.Calls.CACHED_NAME,
-            };
-
     @TargetApi(Build.VERSION_CODES.M)
     private void fetchCallRecords() {
         if (registrar.activity().checkSelfPermission(Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
@@ -131,34 +121,24 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
     private ArrayList<HashMap<String, Object>> getCallRecordMaps(Cursor cursor) {
         ArrayList<HashMap<String, Object>> records = new ArrayList<>();
 
-        int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
-        int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
-        int date = cursor.getColumnIndex(CallLog.Calls.DATE);
-        int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
+        // Getting Indexes
+        int formattedNumbers = cursor.getColumnIndex(CallLog.Calls.CACHED_FORMATTED_NUMBER);
+        int numbers = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+        int types = cursor.getColumnIndex(CallLog.Calls.TYPE);
         int names = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+        int dates = cursor.getColumnIndex(CallLog.Calls.DATE);
+        int durations = cursor.getColumnIndex(CallLog.Calls.DURATION);
 
-        while (cursor != null && cursor.moveToNext()) {
+        // Looping on CallLogs
+        while (cursor.moveToNext()) {
             CallRecord record = new CallRecord();
 
-            String phNumber = cursor.getString(number);
-            String callType = cursor.getString(type);
-            String callDate = cursor.getString(date);
-            Date callDayTime = new Date(Long.valueOf(callDate));
-            String callDuration = cursor.getString(duration);
-
+            record.formattedNumber = cursor.getString(formattedNumbers);
+            record.number = cursor.getString(numbers);
+            record.callType = getCallType(Integer.parseInt(cursor.getString(types)));
             record.name = cursor.getString(names);
-            record.number = phNumber;
-            record.callType = getCallType(Integer.parseInt(callType));
-
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(callDayTime);
-            record.dateYear = cal.get(Calendar.YEAR);
-            record.dateMonth = cal.get(Calendar.MONTH);
-            record.dateDay = cal.get(Calendar.DAY_OF_MONTH);
-            record.dateHour = cal.get(Calendar.HOUR_OF_DAY);
-            record.dateMinute = cal.get(Calendar.MINUTE);
-            record.dateSecond = cal.get(Calendar.SECOND);
-            record.duration = cursor.getLong(4);
+            record.date = cursor.getLong(dates);
+            record.duration = cursor.getLong(durations);
 
             records.add(record.toMap());
         }
@@ -173,8 +153,16 @@ public class PhoneLogPlugin implements MethodCallHandler, PluginRegistry.Request
                 return "OUTGOING_TYPE";
             case CallLog.Calls.MISSED_TYPE:
                 return "MISSED_TYPE";
+            case CallLog.Calls.VOICEMAIL_TYPE:
+                return "VOICEMAIL_TYPE";
+            case CallLog.Calls.REJECTED_TYPE:
+                return "REJECTED_TYPE";
+            case CallLog.Calls.BLOCKED_TYPE:
+                return "BLOCKED_TYPE";
+            case CallLog.Calls.ANSWERED_EXTERNALLY_TYPE:
+                return "ANSWERED_EXTERNALLY_TYPE";
             default:
-                break;
+                return "UNKNOWN_TYPE";
         }
         return null;
     }
