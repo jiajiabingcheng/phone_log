@@ -1,4 +1,4 @@
-# phone_log
+# Phone_Log
 
 A flutter plugin project to access the device phone log (Android only).
 
