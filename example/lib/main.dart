@@ -25,7 +25,6 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-
   requestPermission() async {
     bool res = await phoneLog.requestPermission();
     print("permission request result is " + res.toString());
@@ -96,4 +95,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
