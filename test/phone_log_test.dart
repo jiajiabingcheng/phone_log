@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:test/test.dart';
-
 import 'package:phone_log/phone_log.dart';
 
 void main() {
@@ -17,10 +16,11 @@ void main() {
     mockChannel = new MockPlatformChannel();
     mockChannelForGetLogs = new MockPlatformChannel();
 
-    when(mockChannel.invokeMethod(typed(any), any))
+    when(mockChannel.invokeMethod(any, any))
         .thenAnswer((Invocation invocation) {
       invokedMethod = invocation.positionalArguments[0];
       arguments = invocation.positionalArguments[1];
+      return;
     });
 
     when(mockChannelForGetLogs.invokeMethod('getPhoneLogs', any))
@@ -53,7 +53,7 @@ void main() {
       expect(record.formattedNumber, '123 123 1234');
       expect(record.callType, 'INCOMING_TYPE');
       expect(record.number, '1231231234');
-      expect(record.dateYear, 2018);
+      expect(record.date.runtimeType, DateTime);
       expect(record.duration, 123);
 
       var phoneLogMethod = new PhoneLog.private(mockChannel);
